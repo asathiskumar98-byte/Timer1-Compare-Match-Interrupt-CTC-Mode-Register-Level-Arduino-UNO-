@@ -1,73 +1,94 @@
-⚡ Timer1 Compare Match Interrupt (CTC Mode) — Register-Level (Arduino UNO)
+🧭 AVR Timer1 – Output Compare Mode (Toggle)
 
-This project demonstrates Timer1 Output Compare Match Interrupt (CTC Mode) using register-level programming on the ATmega328P (Arduino UNO).
-When the timer value matches the compare register OCR1A, the OC1A (D9) pin toggles automatically to generate a precise square wave.
+Microcontroller: ATmega328P
+IDE/Compiler: Arduino IDE / AVR-GCC
+Timer Mode: Output Compare (Toggle on Match)
+Pin Used: PB1 (OC1A)
 
-⚙️ Hardware Used
+⚙️ Project Description
 
-Arduino UNO (ATmega328P)
+This project demonstrates how to use Timer1 in Output Compare Mode to toggle OC1A (PB1) each time the timer matches a predefined value in the OCR1A register.
 
-LED connected to pin D9 (OC1A)
+With a prescaler of 1024 and OCR1A = 15625, the toggle frequency corresponds to a 1 Hz square wave (since it toggles every 1 second — full cycle = 2 seconds).
 
-220Ω current-limiting resistor
+🧮 Frequency Calculation
 
-🔌 Pin Configuration
-Component	Function	Arduino Pin	Port
-LED	Compare Match Output	D9	PB1 (OC1A)
-VCC	Power	+5V	—
-GND	Ground	GND	—
-🧩 Code Explanation
-Registers Used
-Register	Purpose
-TCCR1A / TCCR1B	Configure Timer1 mode and prescaler
-TIMSK1	Enable Output Compare Match A interrupt
-OCR1A	Holds compare match value
-SREG	Global Interrupt Enable
-DDRB	Configure PB1 as output
-⚙️ Timer Configuration
+CPU Clock (f<sub>CPU</sub>) = 16 MHz
+Prescaler (N) = 1024
+Compare Value (OCR1A) = 15625
 
-Mode: CTC (Clear Timer on Compare Match)
+𝑓
+𝑡
+𝑜
+𝑔
+𝑔
+𝑙
+𝑒
+=
+𝑓
+𝐶
+𝑃
+𝑈
+2
+×
+𝑁
+×
+(
+𝑂
+𝐶
+𝑅
+1
+𝐴
++
+1
+)
+=
+16
+,
+000
+,
+000
+2
+×
+1024
+×
+15626
+≈
+0.5
+ Hz
+f
+toggle
+	​
 
-Output Behavior: Toggle OC1A pin on compare match
+=
+2×N×(OCR1A+1)
+f
+CPU
+	​
 
-Prescaler: 1024 (CS12 + CS10)
+	​
 
-Compare Value: 15625
+=
+2×1024×15626
+16,000,000
+	​
 
-Output Pin: PB1 → Arduino D9
+≈0.5 Hz
 
-🧠 Working Principle
+Since toggle happens twice per cycle, Output Frequency = 0.5 Hz → Period = 2 seconds (1 s HIGH, 1 s LOW).
 
-Timer1 counts from TCNT1 = 0 up to OCR1A = 15625.
+🧰 Hardware Setup
+Pin	Function	Description
+PB1	OC1A	Output compare toggle pin
+GND	Ground	Common reference
+VCC	+5 V	Power supply
 
-When the match occurs:
+Connect an LED (with a 330 Ω resistor) to PB1 → You’ll see it blink at 1 Hz.
 
-The OC1A (D9) pin toggles automatically (hardware action).
+🧩 Applications
 
-The TIMER1_COMPA_vect ISR triggers (software interrupt).
+Generating precise square waves or timing signals
 
-Inside the ISR, TCNT1 and OCR1A are reloaded for continuous operation.
+Controlling clocks and real-time events
 
-This generates a 1 Hz square wave on D9 — LED toggles every second.
-
-📏 Calculation
-
-Timer1 runs at 16 MHz with a prescaler = 1024
-→ Timer tick = 16,000,000 / 1024 = 15625 Hz
-
-To get a 1-second period:
-
-OCR1A = 15625
-
-
-Since the pin toggles at every compare match (half-period):
-
-Output frequency = 0.5 Hz toggle → 1 second full ON/OFF cycle
-
-💡 Output
-
-LED on D9 (PB1) toggles every second.
-
-Output is hardware-timed, precise, and CPU-independent.
-
-Works great for square-wave generation or event timing.
+Synchronizing with external circuits or PWM drivers
